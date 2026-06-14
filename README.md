@@ -1,5 +1,7 @@
 # Metadata Analyzer
 
+![CI](https://github.com/michspenz/MetaData-Analyzer/actions/workflows/ci.yml/badge.svg)
+
 > **Forensic metadata extraction tool for images and documents — Digital Forensics Portfolio Project**
 
 ---
