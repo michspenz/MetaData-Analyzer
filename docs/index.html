@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Metadata Analyzer | Forensic File Intelligence</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      color-scheme: dark;
+      --bg: #070b10;
+      --surface: #0f1724;
+      --surface-2: #132031;
+      --text: #e6f7ff;
+      --text-muted: #8a99a6;
+      --accent: #39d98a;
+      --border: rgba(57, 217, 138, 0.12);
+      --shadow: 0 24px 80px rgba(0, 0, 0, 0.35);
+      --radius: 24px;
+    }
+    * {
+      box-sizing: border-box;
+    }
+    html, body {
+      margin: 0;
+      min-height: 100%;
+      background: radial-gradient(circle at top, rgba(57, 217, 138, 0.08), transparent 28%),
+                  var(--bg);
+      color: var(--text);
+      font-family: 'Inter', system-ui, sans-serif;
+    }
+    body {
+      line-height: 1.6;
+    }
+    a {
+      color: inherit;
+      text-decoration: none;
+    }
+    .page {
+      max-width: 1160px;
+      margin: 0 auto;
+      padding: 32px 24px 64px;
+    }
+    .hero {
+      display: grid;
+      gap: 24px;
+      padding: 48px 0 36px;
+    }
+    .hero h1 {
+      font-size: clamp(2.8rem, 4vw, 4.5rem);
+      line-height: 0.98;
+      margin: 0;
+      letter-spacing: -0.05em;
+    }
+    .hero p {
+      max-width: 760px;
+      margin: 16px 0 0;
+      color: var(--text-muted);
+      font-size: 1.05rem;
+    }
+    .hero-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 16px;
+      align-items: center;
+    }
+    .button {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 50px;
+      padding: 0 24px;
+      border-radius: 14px;
+      font-weight: 700;
+      transition: transform 0.18s ease, box-shadow 0.18s ease, background 0.18s ease;
+      border: 1px solid transparent;
+      cursor: pointer;
+    }
+    .button-primary {
+      background: linear-gradient(135deg, #26d38e, #02a56a);
+      color: #061010;
+      box-shadow: 0 18px 50px rgba(37, 184, 122, 0.22);
+    }
+    .button-secondary {
+      background: rgba(255,255,255,0.05);
+      color: var(--text);
+      border-color: rgba(255,255,255,0.12);
+    }
+    .button:hover {
+      transform: translateY(-1px);
+    }
+    .intro-card {
+      padding: 28px;
+      border-radius: var(--radius);
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid var(--border);
+      backdrop-filter: blur(18px);
+      box-shadow: var(--shadow);
+    }
+    .section {
+      margin-top: 60px;
+    }
+    .section h2 {
+      font-size: 1.9rem;
+      margin: 0 0 18px;
+    }
+    .section p {
+      color: var(--text-muted);
+      margin: 0;
+      max-width: 760px;
+    }
+    .grid {
+      display: grid;
+      gap: 20px;
+    }
+    .feature-cards {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+    .card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 22px;
+      padding: 24px;
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.18);
+    }
+    .card h3 {
+      margin-top: 0;
+      margin-bottom: 12px;
+      font-size: 1.2rem;
+      color: #e5fff4;
+    }
+    .card p {
+      margin: 0;
+      color: var(--text-muted);
+      font-size: 0.98rem;
+    }
+    .code-block {
+      background: #08121b;
+      border: 1px solid rgba(57, 217, 138, 0.14);
+      border-radius: 18px;
+      padding: 24px;
+      overflow-x: auto;
+      font-family: 'JetBrains Mono', monospace, ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas;
+      color: #c8ffdf;
+      font-size: 0.95rem;
+      line-height: 1.7;
+      margin-top: 20px;
+    }
+    .code-block code {
+      display: block;
+      white-space: pre-wrap;
+    }
+    .terminal {
+      background: #02090f;
+      border: 1px solid rgba(57, 217, 138, 0.12);
+      border-radius: 24px;
+      padding: 28px;
+      color: #d2f8d3;
+      box-shadow: var(--shadow);
+    }
+    .terminal-line {
+      font-family: 'JetBrains Mono', monospace;
+      margin-bottom: 12px;
+    }
+    .terminal-line span.prompt {
+      color: #39d98a;
+      margin-right: 0.6rem;
+    }
+    .terminal-line span.output {
+      color: #9bdba2;
+    }
+    .footer {
+      margin-top: 72px;
+      padding-top: 30px;
+      border-top: 1px solid rgba(255,255,255,0.08);
+      color: var(--text-muted);
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      gap: 12px;
+      font-size: 0.95rem;
+    }
+    .footer a {
+      color: var(--accent);
+    }
+    @media (max-width: 880px) {
+      .feature-cards {
+        grid-template-columns: 1fr;
+      }
+      .hero {
+        padding-top: 20px;
+      }
+      .hero-actions {
+        width: 100%;
+      }
+      .button {
+        width: 100%;
+      }
+    }
+    @media (max-width: 520px) {
+      .page {
+        padding: 20px 18px 48px;
+      }
+      .hero h1 {
+        font-size: 2.6rem;
+      }
+      .section h2 {
+        font-size: 1.6rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <main class="page">
+    <section class="hero">
+      <div>
+        <p style="color: var(--accent); text-transform: uppercase; letter-spacing: 0.24em; font-weight: 700; margin-bottom: 16px;">Forensic Metadata Intelligence</p>
+        <h1>Metadata Analyzer</h1>
+        <p>Extract file metadata, verify integrity, and generate investigator-ready reports from images and documents with a single command.</p>
+        <div class="hero-actions">
+          <a class="button button-primary" href="https://github.com/michspenz/MetaData-Analyzer/archive/refs/heads/main.zip">Download ZIP</a>
+          <a class="button button-secondary" href="https://github.com/michspenz/MetaData-Analyzer">View on GitHub</a>
+        </div>
+      </div>
+      <div class="intro-card">
+        <p style="font-size: 0.95rem; color: var(--text-muted); margin:0 0 16px;">Designed for security analysts, incident responders, and digital forensics investigators who need trusted metadata, chain of custody hashes, and evidence-grade output.</p>
+        <ul style="list-style: none; padding: 0; margin: 0; color: var(--text);">
+          <li style="margin-bottom: 12px;"><strong style="color: var(--accent);">MD5 + SHA256 verification</strong> for file integrity checks and forensic chain of custody.</li>
+          <li style="margin-bottom: 12px;"><strong style="color: var(--accent);">MIME detection</strong> with libmagic to catch spoofed extensions.</li>
+          <li style="margin-bottom: 12px;"><strong style="color: var(--accent);">HTML evidence reports</strong> with clickable GPS maps and clear status indicators.</li>
+        </ul>
+      </div>
+    </section>
+
+    <section class="section">
+      <h2>Features</h2>
+      <p>Powerful forensic extraction across images, PDFs, and DOCX files with modern reporting and deep artifact detection.</p>
+      <div class="grid feature-cards" style="margin-top: 24px;">
+        <article class="card">
+          <h3>Hashing</h3>
+          <p>Extract MD5 and SHA256 hashes for every analyzed file to prove evidence integrity and support chain of custody reporting.</p>
+        </article>
+        <article class="card">
+          <h3>Entropy Analysis</h3>
+          <p>Calculate Shannon entropy for each file and flag high entropy as possible encryption or compression.</p>
+        </article>
+        <article class="card">
+          <h3>GPS Extraction</h3>
+          <p>Read embedded geolocation metadata from images and surface coordinates in investigator-ready reports.</p>
+        </article>
+        <article class="card">
+          <h3>HTML Reports</h3>
+          <p>Generate clean, self-contained HTML reports with styled tables, highlighted findings, and map links for GPS evidence.</p>
+        </article>
+        <article class="card">
+          <h3>MIME Detection</h3>
+          <p>Detect real file types using libmagic instead of relying on extension names, so renamed or spoofed files are caught.</p>
+        </article>
+        <article class="card">
+          <h3>EXIF Stripping Detection</h3>
+          <p>Flag JPEG and PNG images that have no EXIF metadata at all, highlighting possible evidence sanitization.</p>
+        </article>
+      </div>
+    </section>
+
+    <section class="section">
+      <h2>Installation</h2>
+      <p>Install dependencies and run the tool in a secure Python environment.</p>
+      <div class="code-block"><code>python -m venv venv
+venv\Scripts\activate
+pip install -r requirements.txt</code></div>
+      <div class="code-block"><code>python analyzer.py sample_files\
+  --json --csv --html</code></div>
+    </section>
+
+    <section class="section">
+      <h2>Sample Output</h2>
+      <p>Inspect metadata findings directly in the terminal and export evidence reports for case files.</p>
+      <div class="terminal">
+        <div class="terminal-line"><span class="prompt">$</span><span class="output">python analyzer.py evidence\photo.jpg --json --html</span></div>
+        <div class="terminal-line"><span class="prompt">✓</span><span class="output">Analyzing: photo.jpg</span></div>
+        <div class="terminal-line"><span class="prompt">✓</span><span class="output">JSON report saved: reports/photo_20260617_143000.json</span></div>
+        <div class="terminal-line"><span class="prompt">✓</span><span class="output">HTML report saved: reports/report_20260617_143000.html</span></div>
+        <div class="terminal-line"><span class="prompt">✓</span><span class="output">Analysis complete. 1 file(s) processed.</span></div>
+      </div>
+    </section>
+
+    <footer class="footer">
+      <div>Built by <strong>kiing_vamp</strong></div>
+      <div><a href="https://github.com/michspenz/MetaData-Analyzer" target="_blank">GitHub Repository</a> · <a href="https://twitter.com/kiing_vamp" target="_blank">@kiing_vamp</a></div>
+    </footer>
+  </main>
+</body>
+</html>
