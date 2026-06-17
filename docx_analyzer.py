@@ -9,6 +9,8 @@ the Open XML core properties.
 from pathlib import Path
 from typing import Any, Optional
 
+from analysis_utils import calculate_entropy, calculate_file_hashes, detect_mime_type, entropy_flag
+
 try:
     from docx import Document
     from docx.opc.exceptions import PackageNotFoundError
@@ -50,6 +52,11 @@ def analyze_docx(file_path: str) -> dict:
         "file_size_kb": None,
         "file_extension": path.suffix.lower(),
         "type": "docx",
+        "mime_type": None,
+        "md5_hash": None,
+        "sha256_hash": None,
+        "entropy": None,
+        "entropy_flag": "NORMAL",
         "title": None,
         "subject": None,
         "author": None,
@@ -74,6 +81,10 @@ def analyze_docx(file_path: str) -> dict:
         stat = path.stat()
         result["file_size_bytes"] = stat.st_size
         result["file_size_kb"] = round(stat.st_size / 1024, 2)
+        result["md5_hash"], result["sha256_hash"] = calculate_file_hashes(path)
+        result["entropy"] = calculate_entropy(path)
+        result["entropy_flag"] = entropy_flag(result["entropy"])
+        result["mime_type"] = detect_mime_type(path)
     except OSError as e:
         result["errors"].append(f"File stat error: {e}")
 

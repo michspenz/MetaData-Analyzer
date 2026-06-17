@@ -24,9 +24,9 @@ In digital forensics, **metadata** is data about data. Every file carries hidden
 
 | Format | Extracted Fields |
 |--------|-----------------|
-| **JPG / JPEG / PNG / TIFF** | File name, size, resolution, format, creation/modification dates, camera make & model, lens, software, GPS coordinates (lat/lon/altitude), exposure, ISO, focal length, flash |
-| **PDF** | Title, author, creator, producer, subject, keywords, creation/modification dates, page count, PDF version, encryption status |
-| **DOCX** | Title, author, last modified by, description, keywords, category, creation/modification/print dates, revision number, word/paragraph/character count, application name |
+| **JPG / JPEG / PNG / TIFF** | File name, size, resolution, format, creation/modification dates, camera make & model, lens, software, GPS coordinates (lat/lon/altitude), exposure, ISO, focal length, flash, MIME type, MD5/SHA256 hashes, entropy, EXIF stripped detection |
+| **PDF** | Title, author, creator, producer, subject, keywords, creation/modification dates, page count, PDF version, encryption status, MIME type, MD5/SHA256 hashes, entropy |
+| **DOCX** | Title, author, last modified by, description, keywords, category, creation/modification/print dates, revision number, word/paragraph/character count, application name, MIME type, MD5/SHA256 hashes, entropy |
 
 **Report Formats:**
 - **JSON** — structured per-file report
@@ -100,6 +100,18 @@ python analyzer.py report.docx
 python analyzer.py sample_files/
 ```
 
+### Generate an HTML report
+
+```bash
+python analyzer.py sample_files/ --html
+```
+
+### Scan a folder recursively
+
+```bash
+python analyzer.py sample_files/ --recursive
+```
+
 Folder mode automatically generates a bulk JSON report and a CSV summary in `reports/`.
 
 ### Save an individual JSON report
@@ -129,6 +141,8 @@ positional arguments:
 options:
   --json        Save JSON report(s) to the reports/ directory.
   --csv         Save a CSV summary to the reports/ directory.
+  --html        Generate a self-contained HTML report in the reports/ directory.
+  --recursive   Recursively scan subdirectories when analyzing a folder.
   --no-print    Suppress pretty-print output to stdout.
   --help        Show help message and exit.
 ```
@@ -172,6 +186,11 @@ options:
   "file_size_bytes": 2915675,
   "file_size_kb": 2847.34,
   "type": "image",
+  "mime_type": "image/jpeg",
+  "md5_hash": "d41d8cd98f00b204e9800998ecf8427e",
+  "sha256_hash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "entropy": 7.1234,
+  "entropy_flag": "NORMAL",
   "format": "JPEG",
   "width_px": 4032,
   "height_px": 3024,

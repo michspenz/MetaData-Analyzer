@@ -89,18 +89,24 @@ def _analyze_single(path: Path) -> dict:
     }
 
 
-def _collect_files(target: Path) -> list[Path]:
+def _collect_files(target: Path, recursive: bool = False) -> list[Path]:
     """
-    Collect all supported files from a directory (non-recursive).
+    Collect all supported files from a directory.
 
     Args:
         target: Path to directory.
+        recursive: Whether to scan subdirectories recursively.
 
     Returns:
         Sorted list of supported file Paths.
     """
+    if recursive:
+        iterator = target.rglob("*")
+    else:
+        iterator = target.iterdir()
+
     return sorted(
-        p for p in target.iterdir()
+        p for p in iterator
         if p.is_file() and p.suffix.lower() in ALL_SUPPORTED
     )
 
@@ -129,6 +135,16 @@ def main() -> None:
         help="Save a CSV summary to the reports/ directory (auto-enabled for folders).",
     )
     parser.add_argument(
+        "--html",
+        action="store_true",
+        help="Generate a self-contained HTML report in the reports/ directory.",
+    )
+    parser.add_argument(
+        "--recursive",
+        action="store_true",
+        help="Recursively scan subdirectories when a folder is analyzed.",
+    )
+    parser.add_argument(
         "--no-print",
         action="store_true",
         help="Suppress pretty-print output to stdout.",
@@ -147,6 +163,7 @@ def main() -> None:
         generate_json_report,
         generate_bulk_json_report,
         generate_csv_report,
+        generate_html_report,
     )
 
     results: list[dict] = []
@@ -168,9 +185,13 @@ def main() -> None:
             csv_path = generate_csv_report(results)
             print(f"[+] CSV report saved:  {csv_path}")
 
+        if args.html:
+            html_path = generate_html_report(results)
+            print(f"[+] HTML report saved: {html_path}")
+
     # ── Directory ────────────────────────────────────────────────────────────
     elif target.is_dir():
-        files = _collect_files(target)
+        files = _collect_files(target, recursive=args.recursive)
 
         if not files:
             print(f"[!] No supported files found in: {target}")
@@ -197,6 +218,10 @@ def main() -> None:
 
         bulk_path = generate_bulk_json_report(results)
         print(f"[+] Bulk JSON saved:    {bulk_path}")
+
+        if args.html:
+            html_path = generate_html_report(results)
+            print(f"[+] HTML report saved: {html_path}")
 
     else:
         print(f"[ERROR] Target is neither a file nor a directory: {target}", file=sys.stderr)

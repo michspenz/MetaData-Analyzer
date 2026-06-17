@@ -11,6 +11,8 @@ from datetime import datetime
 from pathlib import Path
 from typing import Any, Optional
 
+from analysis_utils import calculate_entropy, calculate_file_hashes, detect_mime_type, entropy_flag
+
 try:
     from PIL import Image
     from PIL.ExifTags import TAGS, GPSTAGS
@@ -140,6 +142,11 @@ def analyze_image(file_path: str) -> dict:
         "file_size_kb": None,
         "file_extension": path.suffix.lower(),
         "type": "image",
+        "mime_type": None,
+        "md5_hash": None,
+        "sha256_hash": None,
+        "entropy": None,
+        "entropy_flag": "NORMAL",
         "format": None,
         "mode": None,
         "width_px": None,
@@ -160,6 +167,7 @@ def analyze_image(file_path: str) -> dict:
         "color_space": None,
         "gps": {},
         "exif_version": None,
+        "exif_stripped": False,
         "errors": [],
     }
 
@@ -174,6 +182,10 @@ def analyze_image(file_path: str) -> dict:
             result["creation_date"] = datetime.fromtimestamp(stat.st_birthtime).isoformat()
         else:
             result["creation_date"] = datetime.fromtimestamp(stat.st_ctime).isoformat()
+        result["md5_hash"], result["sha256_hash"] = calculate_file_hashes(path)
+        result["entropy"] = calculate_entropy(path)
+        result["entropy_flag"] = entropy_flag(result["entropy"])
+        result["mime_type"] = detect_mime_type(path)
     except OSError as e:
         result["errors"].append(f"File stat error: {e}")
 
@@ -195,6 +207,11 @@ def analyze_image(file_path: str) -> dict:
                 exif_raw = img.getexif()
             except AttributeError:
                 pass
+
+            if img.format in {"JPEG", "PNG"}:
+                has_exif = bool(exif_raw and len(exif_raw) > 0)
+                if not has_exif:
+                    result["exif_stripped"] = True
 
             if exif_raw:
                 exif_data: dict[str, Any] = {}
